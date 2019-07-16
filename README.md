@@ -1,1 +1,1 @@
-# filtered-link-datocms-plugin
+# DatoCMS plugin Filtered link

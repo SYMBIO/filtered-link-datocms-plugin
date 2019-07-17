@@ -1,3 +1,11 @@
 {
-  "name": "filtered-link-datocms-plugin"
+  "version": 2,
+  "name": "filtered-link-datocms-plugin",
+  "builds": [
+    { "src": "www/**/*", "use": "@now/static" },
+    { "src": "api/**/*.js", "use": "@now/node" }
+  ],
+  "routes": [
+    { "src": "/", "dest": "www/index.html" }
+  ]
 }

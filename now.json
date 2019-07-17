@@ -3,9 +3,13 @@
   "name": "filtered-link-datocms-plugin",
   "builds": [
     { "src": "www/**/*", "use": "@now/static" },
+    { "src": "src/**/*.js", "use": "@now/node" },
     { "src": "api/**/*.js", "use": "@now/node" }
   ],
   "routes": [
     { "src": "/", "dest": "www/index.html" }
-  ]
+  ],
+  "env": {
+    "DATOCMS_TOKEN": "@nd-datocms-token-full"
+  }
 }

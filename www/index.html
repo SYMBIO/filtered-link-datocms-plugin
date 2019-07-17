@@ -1,27 +1,44 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-    <title></title>
-    <link rel="stylesheet" href="/www/style.css">
+    <meta charset="UTF-8"/>
+    <script src="https://unpkg.com/datocms-plugins-sdk"></script>
+    <link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet"/>
 </head>
 <body>
-<select class="js-select"></select>
+<select id="FieldValues"></select>
 
-<script>
-    function main() {
+<script type="text/javascript">
+    const input = document.querySelector("select");
+
+/*    DatoCmsPlugin.init(function(plugin) {
+
+        plugin.startAutoResizer();
+
+        input.value = plugin.getFieldValue(plugin.fieldPath);
+
+        plugin.addFieldChangeListener(plugin.fieldPath, function(newValue) {
+            input.value = newValue;
+        });
+
+        input.addEventListener("change", function(e) {
+            plugin.setFieldValue(plugin.fieldPath, e.target.value);
+        });
+    });*/
+
+    function loadData() {
         return fetch("/api/data.js").then(function (response) {
             return response.json();
         }).then(function (data) {
-            var select = document.querySelector(".js-select");
             data.forEach(function (item) {
                 var option = document.createElement('option');
                 option.value = item.value;
                 option.text = item.text;
-                select.add(option);
+                input.add(option);
             });
         });
     }
-    main();
+    loadData();
 </script>
 </body>
 </html>

@@ -10,56 +10,36 @@ const client = new SiteClient(process.env.DATOCMS_TOKEN);
  * Converts human-readable apiKey of specified model to non-readable ID
  * @param apiKey apiKey of filtered Model to convert
  */
-function apiKeyToId(apiKey) {
-    client.itemTypes.all()
-        .then((types) => {
-            types.forEach((type) => {
-                try {
-                    if (type.collectionAppeareance === "table" && type.apiKey === apiKey) {
-                        console.log(type.id);
-                    }
-                } catch (e) {
-                }
-            });
-        });
+async function apiKeyToId(apiKey) {
+    let ModelID;
+    var types = await client.itemTypes.all();
+    types.forEach((type) => {
+        if (type.collectionAppeareance === "table" && type.apiKey === apiKey) {
+            ModelID = type.id;
+        }
+    });
+    return ModelID;
 }
 
 /**
  * Returns title value of specified model ID records
- * @param modelId key of filtered Model
+ * @param modelApiKey apiKey of filtered Model
  * @param returnField apiKey of field to be returned
  */
-async function getFilteredValues(model, returnField) {
-    try {
-        var modelId = await apiKeyToId(model);
+async function getFilteredValues(Filter, returnField){
+    var returnedValues = [];
 
-        var items = await client.items.all({
-            "filter[type]": modelId,
-            "version": "published"
-        });
-
-        items.forEach((item) => {
-            try {
-                if (item.statute === "Vlastní") {
-                    console.log(item.title["cs"]);
-                }
-            } catch (e) {
-            }
-        });
-    } catch (error) {
-        console.log(error);
-    }
-
-    return [
-        {
-            value: 1,
-            text: "Item 1"
-        },
-        {
-            value: 2,
-            text: "Item 2"
+    var items = await client.items.all({
+        "filter[type]": await apiKeyToId(Filter.ModelApiKey),//107674
+        "version": "published"
+    });
+    items.forEach((item) => {
+        if (eval("item."+Filter.FieldApiKey) === Filter.DesiredValue) {
+            var returnedObject = {value: item.id, text: eval("item."+returnField+"[\"cs\"]")};
+            returnedValues.push(returnedObject);
         }
-    ];
+    });
+    return returnedValues;
 }
 
 module.exports = getFilteredValues;

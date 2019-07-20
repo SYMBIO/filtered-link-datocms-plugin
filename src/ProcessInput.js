@@ -1,8 +1,8 @@
 const getFilteredValues = require('./getFilteredValues');
 
-async function ProcessInput(InputString, returnField){
+async function ProcessInput(inputQuery, returnField){
 
-        let InputFilters = InputString.split(',');
+        let InputFilters = inputQuery.split(',');
 
         var Filter = {
                 ModelApiKey: InputFilters[0].split('.')[0],

@@ -10,7 +10,7 @@ async function ProcessInput(inputQuery, returnField){
                 DesiredValue: (InputFilters[0].split('.')[1]).split('=')[1],
         };
 
-return getFilteredValues(Filter, returnField);
+return await getFilteredValues(Filter, returnField);
 }
 
 module.exports = ProcessInput;

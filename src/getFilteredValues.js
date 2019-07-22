@@ -35,7 +35,7 @@ async function getFilteredValues(Filter, returnField){
     });
     items.forEach((item) => {
         if (eval("item."+Filter.FieldApiKey) === Filter.DesiredValue) {
-            var returnedObject = {value: item.id, text: eval("item."+returnField+"[\"cs\"]")};
+            var returnedObject = {value: item.id, text: eval("item."+returnField)};
             returnedValues.push(returnedObject);
         }
     });

@@ -29,7 +29,10 @@
     let selected_value;
     let model_name;
 
-    input.value = plugin.getFieldValue(plugin.fieldPath);
+    window.onload = () => {
+        selected_value = plugin.getFieldValue(plugin.fieldPath);
+        chooseValue(selected_value, clicked = false);
+    }
 
     function loadData() {
         return fetch("/api/data.js", {
@@ -100,8 +103,21 @@ const chooseValue = (value, clicked) => {
         document.getElementById(option.id).className = "option_result";
     });
 
-    clicked ? (document.getElementById(value).className = "option_result__selected") : (document.getElementById("option_"+value).className = "option_result__selected");
-    
+    if(clicked){
+        document.getElementById(value).className = "option_result__selected";
+    } else {
+        document.getElementById("option_"+value).className = "option_result__selected";
+        input.value = ConvertIdToName(value);
+    }    
+}
+
+const ConvertIdToName = (value) => {
+    var RecordName = "";
+    document.querySelectorAll('option_result').forEach((Record) => {
+        if(Record.id.split('_')[1] === value){
+            RecordName = Record.innerHTML.split('<')[0];
+        } 
+    });
 }
 
 const setElementHeight = (type) => {

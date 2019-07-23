@@ -92,7 +92,7 @@ const setValue = (text, value) => {
 
     arrow_down.style.opacity = "0.1";
     
-    plugin.setFieldValue(plugin.fieldPath, value);
+    plugin.setFieldValue(plugin.fieldPath, e.target.value);
 }
 
 const chooseValue = (value, clicked) => {

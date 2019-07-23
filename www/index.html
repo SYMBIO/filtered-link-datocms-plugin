@@ -29,10 +29,9 @@
     let selected_value;
     let model_name;
 
-    window.onload = () => {
-        selected_value = plugin.getFieldValue(plugin.fieldPath);
-        chooseValue(selected_value, clicked = false);
-    }
+    selected_value = plugin.getFieldValue(plugin.fieldPath);
+    chooseValue(selected_value, clicked = false);
+    console.log(selected_value);
 
     function loadData() {
         return fetch("/api/data.js", {

@@ -38,8 +38,8 @@
                 'Accept': 'application/json',
                 'Content-type': 'application/json',
             },
-            body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
-            // body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
+            // body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
+            body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
         }).then(function (response) {
             return response.json();
         }).then(function (data) {
@@ -92,7 +92,7 @@ const setValue = (text, value) => {
 
     arrow_down.style.opacity = "0.1";
     
-    plugin.setFieldValue(plugin.fieldPath, e.target.value);
+    plugin.setFieldValue(plugin.fieldPath, value.split(_)[1]);
 }
 
 const chooseValue = (value, clicked) => {

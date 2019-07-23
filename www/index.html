@@ -30,7 +30,6 @@
     let model_name;
 
     input.value = plugin.getFieldValue(plugin.fieldPath);
-    chooseValue(await plugin.getFieldValue(plugin.fieldPath), clicked=false);
 
     function loadData() {
         return fetch("/api/data.js", {
@@ -101,7 +100,7 @@ const chooseValue = (value, clicked) => {
         document.getElementById(option.id).className = "option_result";
     });
 
-    clicked ? (document.getElementById(value).className = "option_result__selected") : (document.getElementById("option_"+value).className = "option_result__selected")
+    clicked ? (document.getElementById(value).className = "option_result__selected") : (document.getElementById("option_"+value).className = "option_result__selected");
     
 }
 

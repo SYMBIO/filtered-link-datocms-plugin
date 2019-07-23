@@ -48,9 +48,10 @@
 
             data.forEach(function (item) {
                 document.querySelector('.no_results').style.display = "none";
-                document.querySelector('.hint_block').innerHTML += '<div id="option_'+item.value+'" onclick="setValue(\''+item.text+'\', '+item.value+')" class="option_result">'+item.text+'<span class="option_code">ModelApiKey #'+item.value+'</span></div>';
+                document.querySelector('.hint_block').innerHTML += '<div id="option_'+item.value+'" class="option_result">'+item.text+'<span class="option_code">ModelApiKey #'+item.value+'</span></div>';
                 console.log(item);
                 setElementHeight('custom');
+                getResults();
             });
         });
     }
@@ -68,7 +69,16 @@
             setElementHeight('default');
         }
 });
-})
+});
+
+const getResults = () => {
+document.querySelectorAll('.option_result').forEach((element) => {
+    console.log(element);
+    element.addEventListener("click", () => {
+        setValue(element.innerHTML.split('<')[0], element.id);
+    });
+});
+}
 
 const setValue = (text, value) => {
     input.value = text;
@@ -79,7 +89,7 @@ const setValue = (text, value) => {
         document.getElementById(option.id).className = "option_result";
     });
 
-    document.getElementById('option_'+value).className = "option_result__selected";
+    document.getElementById(value).className = "option_result__selected";
 
     // plugin.setFieldValue(plugin.fieldPath, e.target.value);
 }

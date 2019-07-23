@@ -20,8 +20,8 @@
 </div>
 
 <script type="text/javascript">
-    DatoCmsPlugin.init(function(plugin) {
-    plugin.startAutoResizer();
+    // DatoCmsPlugin.init(function(plugin) {
+    // plugin.startAutoResizer();
 
     const input = document.querySelector("#filtered_input");
     const hint_block = document.querySelector('.hint_block');
@@ -37,8 +37,8 @@
                 'Accept': 'application/json',
                 'Content-type': 'application/json',
             },
-            body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
-            // body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
+            // body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
+            body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
         }).then(function (response) {
             return response.json();
         }).then(function (data) {
@@ -84,13 +84,14 @@ const setValue = (text, value) => {
     input.value = text;
     selected_value = value;
     hint_block.style.display = "none";
+    setElementHeight('default');
 
     document.querySelectorAll('.option_result__selected').forEach((option) => {
         document.getElementById(option.id).className = "option_result";
     });
 
     document.getElementById(value).className = "option_result__selected";
-
+    
     // plugin.setFieldValue(plugin.fieldPath, e.target.value);
 }
 
@@ -114,7 +115,7 @@ const setElementHeight = (type) => {
     // });
     // });
 
-});
+// });
 </script>
 </body>
 </html>

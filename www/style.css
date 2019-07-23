@@ -237,6 +237,8 @@ input:-webkit-autofill {
     border: 1px solid #e0e0e0;
     display: none;
     padding: 5px 0px;
+    max-height: 168px;
+    overflow: scroll;
 }
 
 .input_arrow{

@@ -10,15 +10,16 @@ const client = new SiteClient(process.env.DATOCMS_TOKEN);
  * Converts human-readable apiKey of specified model to non-readable ID
  * @param apiKey apiKey of filtered Model to convert
  */
-async function apiKeyToId(apiKey) {
-    let ModelID;
+async function apiKeyToIdOrName(apiKey) {
+    var Model = {ModelID: 0, ModelName: ""};
     var types = await client.itemTypes.all();
     types.forEach((type) => {
         if (type.collectionAppeareance === "table" && type.apiKey === apiKey) {
-            ModelID = type.id;
+            Model.ModelID = type.id;
+            Model.ModelName = type.name;
         }
     });
-    return ModelID;
+    return Model;
 }
 
 /**
@@ -27,10 +28,11 @@ async function apiKeyToId(apiKey) {
  * @param returnField apiKey of field to be returned
  */
 async function getFilteredValues(Filter, returnField){
-    var returnedValues = [];
+    var Model = await apiKeyToIdOrName(Filter.ModelApiKey);
+    var returnedValues = [{value: 0, text: Model.ModelName}];
 
     var items = await client.items.all({
-        "filter[type]": await apiKeyToId(Filter.ModelApiKey),//107674
+        "filter[type]": Model.ModelID,//107674
         "version": "published"
     });
     items.forEach((item) => {

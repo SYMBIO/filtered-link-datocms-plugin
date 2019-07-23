@@ -29,7 +29,7 @@
     let selected_value;
     let model_name;
 
-    // input.value = plugin.getFieldValue(plugin.fieldPath);
+    input.value = plugin.getFieldValue(plugin.fieldPath);
 
     function loadData() {
         return fetch("/api/data.js", {
@@ -88,13 +88,19 @@ const setValue = (text, value) => {
     hint_block.style.display = "none";
     setElementHeight('default');
 
+    chooseValue(value);
+
+    arrow_down.style.opacity = "0.1";
+    
+    plugin.setFieldValue(plugin.fieldPath, text);
+}
+
+const chooseValue = (value) => {
     document.querySelectorAll('.option_result__selected').forEach((option) => {
         document.getElementById(option.id).className = "option_result";
     });
 
     document.getElementById(value).className = "option_result__selected";
-    
-    plugin.setFieldValue(plugin.fieldPath, text);
 }
 
 const setElementHeight = (type) => {

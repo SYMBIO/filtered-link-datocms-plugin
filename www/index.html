@@ -31,8 +31,9 @@
 
     window.onload = function (){
         selected_value = plugin.getFieldValue(plugin.fieldPath);
-        chooseValue(selected_value, clicked = false);
-        console.log(selected_value);
+        input.value = selected_value;
+        // chooseValue(selected_value, clicked = false);
+        // console.log(selected_value);
     }
 
     function loadData() {
@@ -42,8 +43,8 @@
                 'Accept': 'application/json',
                 'Content-type': 'application/json',
             },
-            // body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
-            body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
+            body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
+            // body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
         }).then(function (response) {
             return response.json();
         }).then(function (data) {

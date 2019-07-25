@@ -29,13 +29,6 @@
     let selected_value;
     let model_name;
 
-    window.onload = function (){
-        selected_value = plugin.getFieldValue(plugin.fieldPath);
-        input.value = selected_value;
-        // chooseValue(selected_value, clicked = false);
-        // console.log(selected_value);
-    }
-
     function loadData() {
         return fetch("/api/data.js", {
             method: 'POST',
@@ -132,6 +125,10 @@ const setElementHeight = (type) => {
         }
     }
 }
+
+    selected_value = plugin.getFieldValue(plugin.fieldPath);
+    chooseValue(selected_value, clicked = false);
+    console.log(selected_value);
 
     // plugin.addFieldChangeListener(plugin.fieldPath, function(newValue) {
     //    input.value = newValue;

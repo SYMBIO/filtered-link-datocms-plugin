@@ -257,6 +257,14 @@ input:-webkit-autofill {
     opacity: 1;
 }
 
+.input_arrow__clicked{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 1;
+  transition: 0.3s;
+}
+
 .no_results{
     opacity: 0.7;
     text-align: center;

@@ -1,145 +1,223 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <script src="https://unpkg.com/datocms-plugins-sdk"></script>
     <!-- <link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet"/> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js"></script>
     <link href="www/style.css" media="all" rel="stylesheet">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 
 </head>
+
 <body>
-<!-- <select id="FieldValues"></select> -->
-<div class="input_wrapper">
-        <input type="search" id="filtered_input" placeholder="Vyberte...">
-        <div class = "cleaner"></div><div class = "clearfix"></div>
-        <svg class="input_arrow" height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>
+    <div class="input_wrapper">
+        <input type="search" id="filtered_input" placeholder="Počkejte prosím...">
+        <div class="cleaner"></div>
+        <div class="clearfix"></div>
+        <svg class="input_arrow" height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <path
+                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z">
+            </path>
+        </svg>
         <div style="display: none" class="hint_block">
             <div class="no_results">Počkejte prosím...</div>
         </div>
-</div>
+    </div>
 
-<script type="text/javascript">
-    DatoCmsPlugin.init(function(plugin) {
-    plugin.startAutoResizer();
+    <script type="text/javascript">
+        DatoCmsPlugin.init(function (plugin) {
+            plugin.startAutoResizer();
 
-    const input = document.querySelector("#filtered_input");
-    const hint_block = document.querySelector('.hint_block');
-    const arrow_down = document.querySelector('.input_arrow');
-    let selected_value;
-    let model_name;
+            const input = document.querySelector("#filtered_input");
+            const hint_block = document.querySelector('.hint_block');
+            const arrow_down = document.querySelector('.input_arrow');
+            const fuseOptions =
+            {
+                minMatchCharLength: 0,
+                threshold: 0.4,
+                keys: ['text', 'value']
+            }
+            let selected_value;
+            let model_name;
+            let returned_data;
 
-    function loadData() {
-        return fetch("/api/data.js", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify({inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField}),
-            // body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            if (data === undefined || data.length == 0){
-                document.querySelector('.hint_block').innerHTML = '<div class="no_results">Nic k zobrazení...</div>';
-            } else {
-                data.forEach(function (item) {
-                    item.value === 0 && (model_name = item.text);
-                    if (item.value !== 0){
-                        document.querySelector('.no_results').style.display = "none";
-                        document.querySelector('.hint_block').innerHTML += '<div id="option_'+item.value+'" class="option_result">'+item.text+'<span class="option_code">'+model_name+' #'+item.value+'</span></div>';
-                        setElementHeight('custom');
-                        getResults();
+
+            /**
+             * Initial data load from server
+            */
+            const loadData = () => {
+                return fetch("/api/data.js", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify({ inputQuery: plugin.parameters.instance.queryString, returnField: plugin.parameters.instance.resultField }),
+                    // body: JSON.stringify({inputQuery: 'ensemble.statute=Cizí', returnField: 'title["cs"]'}),
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    returned_data = data;
+                    input.placeholder = "Vyberte...";
+                    if (data.length == 1) {
+                        document.querySelector('.hint_block').innerHTML = '<div class="no_results">Nic k zobrazení...</div>';
+                    } else {
+                        data.forEach(function (item) {
+                            item.value === 0 && (model_name = item.text);
+                            if (item.value !== 0) {
+                                document.querySelector('.no_results').style.display = "none";
+                                document.querySelector('.hint_block').innerHTML += '<div id="option_' + item.value + '" class="option_result">' + item.text + '<span class="option_code">' + model_name + ' #' + item.value + '</span></div>';
+                                setElementHeight('custom');
+                                getResults();
+                            }
+                        });
+                        if (plugin.getFieldValue(plugin.fieldPath) !== undefined || plugin.getFieldValue(plugin.fieldPath).length != 0) {
+                            selected_value = plugin.getFieldValue(plugin.fieldPath);
+                            try {
+                                chooseValue(selected_value, false);
+                                input.value = ConvertIdToName();
+                            } catch {
+                                plugin.setFieldValue(plugin.fieldPath, '');
+                            }
+                        }
                     }
                 });
             }
+            loadData();
+
+            [input, arrow_down].forEach((element) => {
+                element.addEventListener("click", () => {
+                    if (hint_block.style.display === "none") {
+                        hint_block.style.display = "block";
+                        arrow_down.style.opacity = "1";
+                        setElementHeight('custom');
+                    } else {
+                        hint_block.style.display = "none";
+                        arrow_down.style.opacity = "0.1";
+                        setElementHeight('default');
+
+                        if (input.value === '') {
+                            input.value = ConvertIdToName();
+                        }
+                    }
+                });
+            });
+
+            input.addEventListener("keyup", () => {
+                if (input.value === '') {
+                    RemoveAllResults();
+                    returned_data.forEach(function (item) {
+                        if (item.value !== 0) {
+                            document.querySelector('.hint_block').innerHTML += '<div id="option_' + item.value + '" class="option_result">' + item.text + '<span class="option_code">' + model_name + ' #' + item.value + '</span></div>';
+                        }
+                    });
+                    getResults();
+                    try {
+                        chooseValue(selected_value, true);
+                    } catch {
+                        chooseValue(selected_value, false);
+                    }
+                } else {
+                    var fuse = new Fuse(returned_data, fuseOptions)
+                    RemoveAllResults();
+                    fuse.search(input.value).forEach((FilteredData) => {
+                        document.querySelector('.hint_block').innerHTML += '<div id="option_' + FilteredData.value + '" class="option_result">' + FilteredData.text + '<span class="option_code">' + model_name + ' #' + FilteredData.value + '</span></div>';
+                    });
+                    getResults();
+                    try {
+                        chooseValue(selected_value, true);
+                    } catch {
+                        chooseValue(selected_value, false);
+                    }
+                }
+            });
+
+            /**
+             * Removes all results from the select list, this is for instance useful before loading new values (updating select)
+            */
+            const RemoveAllResults = () => {
+                document.querySelectorAll('.option_result,.option_result__selected').forEach((result) => {
+                    result.parentNode.removeChild(result);
+                });
+            }
+
+            /**
+             * Adds event listeners to all results
+            */
+            const getResults = () => {
+                document.querySelectorAll('.option_result').forEach((element) => {
+                    element.addEventListener("click", () => {
+                        setValue(element.innerHTML.split('<')[0], element.id);
+                    });
+                });
+            }
+
+            /**
+             * This function does a few things to initialize the new selected value
+             * 1) Sets the textbox value to the selected value
+             * 2) Hides list and updates plugin's height
+             * 3) A few css changes
+             * 4) Passes the new value to DatoCMS webApp
+             * @param text represents the visible select option value
+             * @param value represents the record ID from DatoCMS Api
+            */
+            const setValue = (text, value) => {
+                input.value = text;
+                selected_value = value;
+                hint_block.style.display = "none";
+                setElementHeight('default');
+
+                chooseValue(value, clicked = true);
+
+                arrow_down.style.opacity = "0.1";
+
+                plugin.setFieldValue(plugin.fieldPath, value.split('_')[1]);
+            }
+
+            /**
+             * Changes the css settings to highligt selected value in the select list
+             * @param value represents the record ID from DatoCMS Api
+             * @param clicked tells the function, whether or not the user clicked the mouse button
+            */
+            const chooseValue = (value, clicked) => {
+                document.querySelectorAll('.option_result__selected').forEach((option) => {
+                    document.getElementById(option.id).className = "option_result";
+                });
+
+                if (clicked) {
+                    document.getElementById(value).className = "option_result__selected";
+                } else {
+                    document.getElementById("option_" + value).className = "option_result__selected";
+                }
+
+                selected_value = value;
+            }
+
+            /**
+             * Uses highlighted option in select list to determine text of record
+            */
+            const ConvertIdToName = () => {
+                return document.querySelector('.option_result__selected').innerHTML.split('<')[0];
+            }
+
+            /**
+             * Dynamically changes plugin's body height to fit it's contents
+             * @param type tells the function, whether the hint block is displayed or not
+            */
+            const setElementHeight = (type) => {
+                if (type === "default") {
+                    document.querySelector('.input_wrapper').style.height = "auto";
+                } else if (type === "custom") {
+                    if (hint_block.style.display === "block") {
+                        let hint_block_height = document.querySelector('.hint_block').offsetHeight + 56;
+                        document.querySelector('.input_wrapper').style.height = hint_block_height + 'px';
+                    }
+                }
+            }
         });
-    }
-    loadData();
-
-[input, arrow_down].forEach((element) => {
-    element.addEventListener("click", () => {
-        if(hint_block.style.display === "none"){
-            hint_block.style.display = "block";
-            arrow_down.style.opacity = "1";
-            setElementHeight('custom');
-        } else {
-            hint_block.style.display = "none";
-            arrow_down.style.opacity = "0.1";
-            setElementHeight('default');
-        }
-});
-});
-
-const getResults = () => {
-document.querySelectorAll('.option_result').forEach((element) => {
-    element.addEventListener("click", () => {
-        setValue(element.innerHTML.split('<')[0], element.id);
-    });
-});
-}
-
-const setValue = (text, value) => {
-    input.value = text;
-    selected_value = value;
-    hint_block.style.display = "none";
-    setElementHeight('default');
-
-    chooseValue(value, clicked=true);
-
-    arrow_down.style.opacity = "0.1";
-    
-    plugin.setFieldValue(plugin.fieldPath, value.split('_')[1]);
-}
-
-const chooseValue = (value, clicked) => {
-    document.querySelectorAll('.option_result__selected').forEach((option) => {
-        document.getElementById(option.id).className = "option_result";
-    });
-
-    if(clicked){
-        document.getElementById(value).className = "option_result__selected";
-    } else {
-        document.getElementById("option_"+value).className = "option_result__selected";
-        input.value = ConvertIdToName(value);
-    }    
-}
-
-const ConvertIdToName = (value) => {
-    var RecordName = "";
-    document.querySelectorAll('option_result').forEach((Record) => {
-        if(Record.id.split('_')[1] === value){
-            RecordName = Record.innerHTML.split('<')[0];
-        } 
-    });
-}
-
-const setElementHeight = (type) => {
-    if(type === "default"){
-        document.querySelector('.input_wrapper').style.height = "auto";
-    } else if(type === "custom"){
-        if(hint_block.style.display === "block"){
-        let hint_block_height = document.querySelector('.hint_block').offsetHeight+56;
-        document.querySelector('.input_wrapper').style.height = hint_block_height+'px';
-        }
-    }
-}
-
-    selected_value = plugin.getFieldValue(plugin.fieldPath);
-    chooseValue(selected_value, clicked = false);
-    console.log(selected_value);
-
-    // plugin.addFieldChangeListener(plugin.fieldPath, function(newValue) {
-    //    input.value = newValue;
-    // });
-
-    // input.addEventListener("change", function(e) {
-    //    plugin.setFieldValue(plugin.fieldPath, e.target.value);
-    // });
-    // });
-
-});
-</script>
+    </script>
 </body>
+
 </html>

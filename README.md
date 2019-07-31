@@ -76,49 +76,49 @@
 </thead>
 <tbody>
 <tr>
-<td>[=]</td>
+<td>{=}</td>
 <td>Hodnota pole je rovna požadované hodnotě.</td>
 <td>1x string, 1x number</td>
 <td><code>ensemble.statute{=}Cizí</code></td>
 </tr>
 <tr>
-<td>[lt]</td>
+<td>{lt}</td>
 <td>Hodnota pole je menší, než požadovaná hodnota.</td>
 <td>1x number</td>
 <td><code>eshopproduct.eshop_product_id{lt}10000</code></td>
 </tr>
 <tr>
-<td>[lte]</td>
+<td>{lte}</td>
 <td>Hodnota pole je menší nebo rovna požadované hodnotě.</td>
 <td>1x number</td>
 <td><code>eshopproduct.eshop_product_id{lte}10000</code></td>
 </tr>
 <tr>
-<td>[gt]</td>
+<td>{gt}</td>
 <td>Hodnota pole je větší, než požadovaná hodnota.</td>
 <td>1x number</td>
 <td><code>eshopproduct.eshop_product_id{gt}10000</code></td>
 </tr>
 <tr>
-<td>[gte]</td>
+<td>{gte}</td>
 <td>Hodnota pole je větší nebo rovna požadované hodnotě</td>
 <td>1x number</td>
 <td><code>eshopproduct.eshop_product_id{gte}10000</code></td>
 </tr>
 <tr>
-<td>[range]</td>
+<td>{range}</td>
 <td>Hodnota pole je ve specifikovaném rozsahu. Hodnoty v rozsahu se oddělují pomlčkou.</td>
 <td>2x number</td>
 <td><code>eshopproduct.eshop_product_id{range}0-10000</code></td>
 </tr>
 <tr>
-<td>[in]</td>
+<td>{in}</td>
 <td>Hodnota pole spadá do požadovaného pole hodnot. Jednotlivé hodnoty se oddělují čárkou.</td>
 <td>∞ string, ∞ number</td>
 <td><code>ensemble.statute{in}Cizí,Vlastní</code></td>
 </tr>
 <tr>
-<td>[contains]</td>
+<td>{contains}</td>
 <td>Hodnota pole obsahuje požadovaný substring.</td>
 <td>1x string</td>
 <td><code>ensemble.statute{contains}Zahr</code></td>
